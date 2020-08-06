@@ -1,0 +1,85 @@
+﻿@using Newtonsoft.Json
+@model MVC.Models.PropertiesViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@Html.AntiForgeryToken()
+<table class="table">
+    <thead>
+        <tr>
+            <td>
+                <b><i>Gross Yield</i></b>
+            </td>
+            <td>
+                <b><i> Price </i></b> 
+            </td>
+            <td>
+              <b><i>  Monthly Rent </i></b>
+            </td>
+            <td>
+               <b><i> Year Built </i></b>
+            </td>
+            <td>
+               <b><i> Address </i></b>
+            </td>
+            <td>
+                <b><i> Save </i></b>
+            </td>
+        </tr>
+    </thead>
+    @foreach (var item in Model.Properties)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.GrossYield)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.listPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.monthlyRent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.yearBuilt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Addresses.address1)
+                <br />
+                @Html.DisplayFor(modelItem => item.Addresses.address2),
+                @Html.DisplayFor(modelItem => item.Addresses.district),
+                @Html.DisplayFor(modelItem => item.Addresses.state),
+                @Html.DisplayFor(modelItem => item.Addresses.zip),
+                @Html.DisplayFor(modelItem => item.Addresses.country).
+            </td>
+            <td>
+                <button data-row="@JsonConvert.SerializeObject(item)" class="clsActionButton">Add</button>
+             </td>
+        </tr>
+    }
+</table>
+<script>
+    var addButtons = document.querySelectorAll(".clsActionButton");
+    var addButtonCount = addButtons.length;
+    for (var i = 0; i < addButtonCount; i++) {
+        addButtons[i].addEventListener('click', onAddRowClicked);
+    }
+
+    function onAddRowClicked(e) {
+        e.preventDefault();
+        var btn = this;
+        var data = btn.dataset.row;
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = '/home/index';
+        var antiForgeryInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        form.appendChild(antiForgeryInput);
+        var input = document.createElement('input');
+        input.setAttribute("type", "hidden");
+        input.setAttribute("value", data);
+        input.setAttribute("name", "rowJson");
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
